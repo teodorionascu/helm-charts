@@ -1813,6 +1813,23 @@ serverFiles:
       # to set this to `https` & most likely set the `tls_config` of the scrape config.
       # * `prometheus.io/path`: If the metrics path is not `/metrics` override this.
       # * `prometheus.io/port`: Scrape the pod on the indicated port instead of the default of `9102`.
+      
+      - job_name: 'blackbox'
+        metrics_path: /probe
+        static_configs:
+  	      - targets:
+  	        - https://google.com
+        relabel_configs:
+  	      - source_labels: [__address__]
+  	        target_label: __param_target
+  	      - source_labels: [__param_target]
+  	        target_label: instance
+  	      - target_label: _address_
+  	        replacement: localhost:9115
+  	      - replacement: http_2xx
+  	        target_label: __param_module
+
+      
       - job_name: 'kubernetes-pods-slow'
         honor_labels: true
 
